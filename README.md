@@ -1,6 +1,6 @@
-# Storm Distcache Example
+# Storm Distributed Cache example
 
-This projet is a simple example to run a *Twitter WordCount* using an Apache Storm topology by tracking a set of specific file called **wordsToTrack* stored and distributed within an Apache Storm cluster exploiting the distributed BLOB storage capability.
+This projet is a simple example to run a **Twitter WordCount** using an [Apache Storm](http://storm.apache.org) topology by tracking a set of specific file called *wordsToTrack* stored and distributed within an Apache Storm cluster exploiting the distributed BLOB storage capability.
 
 ## Requirements
 
@@ -10,7 +10,7 @@ This projet is a simple example to run a *Twitter WordCount* using an Apache Sto
 
 ## Overview
 
-The project includes an infrastructure sub-project which helps to easily spin a Dockerized environment ([Zookeeper](https://zookeeper.apache.org), [Storm](http://storm.apache.org) and [Kafka](https://kafka.apache.org)) to run the example.
+The project includes an infrastructure sub-project which helps to spin a [Dockerized](https://www.docker.com) environment ([Zookeeper](https://zookeeper.apache.org), [Storm](http://storm.apache.org) and [Kafka](https://kafka.apache.org)) to run the example.
 
 ```bash
 ├── README.md
@@ -43,11 +43,11 @@ e6b2f10dd6cf        zookeeper            "/docker-entrypoin..."   ...        ...
 
 ## Preparing the example
 
-### The Twitter kafka producer
+### The Twitter Kafka producer
 
-The Twitter kafka producer uses [Hosebird Client (hbc)](https://github.com/twitter/hbc) for consuming Twitter's Streaming API and uses the [track](https://dev.twitter.com/streaming/overview/request-parameters#track) operation accepting a comma-separated list of phrases which will be used to determine what Tweets will be delivered on the stream.
+The Twitter Kafka producer uses [Hosebird Client (hbc)](https://github.com/twitter/hbc) for consuming Twitter's Streaming API and uses the [Track](https://dev.twitter.com/streaming/overview/request-parameters#track) operation accepting a comma-separated list of phrases which will be used to determine what Tweets will be delivered on the stream.
 
-Before running the producer we should register a ***New App*** under the https://apps.twitter.com in order to get the ***Consumer Key***, ***Consumer Secret***, ***Access Token*** and an ***Access Token Secret***. Then you should edit the initial credentials as follows:
+Before running the producer we should register a ***New App*** under the https://apps.twitter.com service in order to get the developer credentials: ***Consumer Key***, ***Consumer Secret***, ***Access Token*** and ***Access Token Secret***. Then you should edit the initial credentials as follows:
 
 ```bash
 $ cd ../twitter-kafka-producer/
@@ -61,7 +61,7 @@ token=2943654249-e1ltKPiOvVtyyuJMytGugLG4D973vlMQSh
 token.secret=qlXLbnxTbeBaBjjjGGtFGHjJJ5tKEdfK32EFb8
 ```
 
-Now it's time to build the application:
+Now it's time to build the producer:
 
 ```bash
 $ mvn clean package
@@ -73,13 +73,13 @@ And run it:
 $ java -jar target/twitter-kafka-producer-1.0.0-SNAPSHOT.jar <word to track>
 ```
 
-example:
+Example:
 
 ```bash
 $ java -jar target/twitter-kafka-producer-1.0.0-SNAPSHOT.jar trump
 ```
 
-Automatically the Twitter kafka producer will start to inject Tweets into a Kafka topic named *twitter-topic*.
+Automatically the Twitter Kafka producer will start to inject Tweets into a Kafka topic named *twitter-topic*.
 
 ### The Storm Distributed Cache
 
@@ -109,7 +109,7 @@ $ cd /
 $ storm blobstore create --file wordsToTrack.list --acl o::rwa wordstotrack
 ```
 
-Check the file consistency directly into the blobstore by:
+Check the file consistency directly into the blobstore:
 
 ```bash
 $ storm blobstore list wordstotrack
@@ -132,12 +132,16 @@ $ storm blobstore cat wordstotrack
 
 The *Twitter WordCount topology* is based on the classic [Storm WordCount](http://www.corejavaguru.com/bigdata/storm/word-count-topology) example.
 
+This topology will read Tweets from the Kafka topic (twitter-topic) and, perform some text-cleaning operation, split the text in words and count every occurence of the words listed in the initial *wordsToTrack.list* file.
+
+In order to build the topology we will run:
+
 ```bash
 $ cd storm-distcache-topology/
 $ mvn clean package
 ```
 
-Upload the resulting artifact to the *Nimbus* container by:
+Then it's time to upload the resulting artifact to the *Nimbus* container by:
 
 ```bash
 $ docker cp target/storm-distcache-topology-1.0.0-SNAPSHOT.jar 284a26fd5d14:storm-distcache-topology-1.0.0-SNAPSHOT.jar
@@ -146,7 +150,7 @@ $ ls -la /storm-*
      1 501      dialout   19149093 Jun 29 15:09 /storm-distcache-topology-1.0.0-SNAPSHOT.jar
 ```
 
-And start the *Twitter WordCount topology*:
+And start the topology:
 
 ```bash
 $ cd /
@@ -178,11 +182,29 @@ WordCount - [count]    * Word "disaster" appears 1 times in 251111 messages (0 %
 
 The next step will be to update (reload) the *wordstotrack* BLOB file without re-deploying the whole topology. The distributed cache will take care of propagate the updates through the cluster nodes.
 
+We will edit the *wordsToTrack.list* file and add or remove some words to track, and refresh it:
+
 ```bash
+$ vi /wordsToTrack.list
 $ storm blobstore update -f /wordsToTrack.list wordstotrack
 ```
+We sould check see the topology reloading the file from blob storage:
 
-Finally we can shutdown the example environment by running:
+```bash
+WordCount - [count] Loading BLOB contents (wordstotrack v1498754196000):
+WordCount -   - stupid
+WordCount -   - weak
+WordCount -   - loser
+...
+
+As we could see the topology only updates the file when the file version changes:
+
+```bash
+WordCount - [count] Loading BLOB contents (wordstotrack v1498748509000) # Initial file
+WordCount - [count] Loading BLOB contents (wordstotrack v1498754196000) # Reload after the update
+```
+
+Finally, we can shutdown the example environment by running the following commands into the project directory:
 
 ```bash
 $ cd infrastructure/
