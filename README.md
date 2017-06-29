@@ -28,17 +28,17 @@ $ cd storm-distcache-example/infrastructure/
 $ ./start.sh
 ```
 
-The *start.sh* script fires up a Docker compose which builds the necessary infrastructure. A total of five containers should be up & running up to this point.
+The *start.sh* script fires up a Docker compose which builds the necessary infrastructure. A total of five containers should be *up & running* up to this point.
 
 ```bash
 docker ps
 
 CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                          NAMES
-9c3a98f84200        storm:1.0.3          "/docker-entrypoin..."   9 seconds ago       Up 7 seconds                                       supervisor
-55a2fa805ef5        storm:1.0.3          "/docker-entrypoin..."   9 seconds ago       Up 8 seconds        0.0.0.0:8080->8080/tcp         ui
-284a26fd5d14        storm:1.0.3          "/docker-entrypoin..."   10 seconds ago      Up 8 seconds        0.0.0.0:6627->6627/tcp         nimbus
-9dcfa5ad74cc        wurstmeister/kafka   "start-kafka.sh"         10 seconds ago      Up 9 seconds        0.0.0.0:9092->9092/tcp         kafka
-e6b2f10dd6cf        zookeeper            "/docker-entrypoin..."   11 seconds ago      Up 9 seconds        2181/tcp, 2888/tcp, 3888/tcp   zookeeper
+9c3a98f84200        storm:1.0.3          "/docker-entrypoin..."   ...       ...                                       supervisor
+55a2fa805ef5        storm:1.0.3          "/docker-entrypoin..."   ...       ...        0.0.0.0:8080->8080/tcp         ui
+284a26fd5d14        storm:1.0.3          "/docker-entrypoin..."   ...      ...        0.0.0.0:6627->6627/tcp         nimbus
+9dcfa5ad74cc        wurstmeister/kafka   "start-kafka.sh"         ...      ...       0.0.0.0:9092->9092/tcp         kafka
+e6b2f10dd6cf        zookeeper            "/docker-entrypoin..."   ...      ...        2181/tcp, 2888/tcp, 3888/tcp   zookeeper
 ```
 
 ## Preparing the example
@@ -47,7 +47,7 @@ e6b2f10dd6cf        zookeeper            "/docker-entrypoin..."   11 seconds ago
 
 The Twitter kafka producer uses [Hosebird Client (hbc)](https://github.com/twitter/hbc) for consuming Twitter's Streaming API and uses the [track](https://dev.twitter.com/streaming/overview/request-parameters#track) operation accepting a comma-separated list of phrases which will be used to determine what Tweets will be delivered on the stream.
 
-Before running the producer we should register a ***New App*** under the https://apps.twitter.com in order to get the ***Consumer Key (API Key)***, ***Consumer Secret (API Secret)***, ***Access Token*** and an ***Access Token Secret***. Then you should edit the initial credentials as follows:
+Before running the producer we should register a ***New App*** under the https://apps.twitter.com in order to get the ***Consumer Key***, ***Consumer Secret***, ***Access Token*** and an ***Access Token Secret***. Then you should edit the initial credentials as follows:
 
 ```bash
 $ cd ../twitter-kafka-producer/
@@ -83,11 +83,11 @@ Automatically the Twitter kafka producer will start to inject Tweets into a Kafk
 
 ### The Storm Distributed Cache
 
-The Storm [distributed cache] (http://storm.apache.org/releases/1.1.0/distcache-blobstore.html) feature is used to efficiently distribute files (or blobs) that are large and can change during the lifetime of a topology, such as geo-location data, dictionaries, etc. Typical use cases include phrase recognition, entity extraction, document classification and so forth.
+The Storm [distributed cache](http://storm.apache.org/releases/1.1.0/distcache-blobstore.html) feature is used to efficiently distribute files (or blobs) that are large and can change during the lifetime of a topology, such as geo-location data, dictionaries, etc. Typical use cases include phrase recognition, entity extraction, document classification and so forth.
 
 At the starting time of a topology, the user specifies the set of files the topology needs. Once a topology is running, the user at any time can request for any file in the distributed cache to be updated with a newer version. The updating of blobs happens in an eventual consistency model.
 
-Continuing with the example We will edit the initial list of words to track at convenience as follows:
+Continuing with the example we will edit the initial list of words to track at convenience as follows:
 
 ```bash
 $ cd ../storm-distcache-topology/
@@ -143,7 +143,7 @@ Upload the resulting artifact to the *Nimbus* container by:
 $ docker cp target/storm-distcache-topology-1.0.0-SNAPSHOT.jar 284a26fd5d14:storm-distcache-topology-1.0.0-SNAPSHOT.jar
 $ docker exec -t -i 284a26fd5d14 /bin/bash
 $ ls -la /storm-*
-       1 501      dialout   19149093 Jun 29 15:09 /storm-distcache-topology-1.0.0-SNAPSHOT.jar
+     1 501      dialout   19149093 Jun 29 15:09 /storm-distcache-topology-1.0.0-SNAPSHOT.jar
 ```
 
 And start the *Twitter WordCount topology*:
@@ -180,5 +180,13 @@ The next step will be to update (reload) the *wordstotrack* BLOB file without re
 
 ```bash
 $ storm blobstore update -f /wordsToTrack.list wordstotrack
+```
+
+Finally we can shutdown the example environment by running:
+
+```bash
+$ cd infrastructure/
+$ ./stop.sh
+...
 ```
 
