@@ -1,4 +1,4 @@
-# Storm Distributed Cache example
+# Storm distributed cache example
 
 This projet is a simple example to run a **Twitter WordCount** using an [Apache Storm](http://storm.apache.org) topology by tracking a set of specific file called *wordsToTrack* stored and distributed within an Apache Storm cluster exploiting the distributed BLOB storage capability.
 
@@ -188,7 +188,7 @@ We will edit the *wordsToTrack.list* file and add or remove some words to track,
 $ vi /wordsToTrack.list
 $ storm blobstore update -f /wordsToTrack.list wordstotrack
 ```
-We sould check see the topology reloading the file from blob storage:
+We sould check see the topology reloading the file from blob storage (note: We removed the `win` word):
 
 ```bash
 WordCount - [count] Loading BLOB contents (wordstotrack v1498754196000):
@@ -196,6 +196,7 @@ WordCount -   - stupid
 WordCount -   - weak
 WordCount -   - loser
 ...
+```
 
 As we could see the topology only updates the file when the file version changes:
 
