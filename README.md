@@ -188,7 +188,7 @@ We will edit the *wordsToTrack.list* file and add or remove some words to track,
 $ vi /wordsToTrack.list
 $ storm blobstore update -f /wordsToTrack.list wordstotrack
 ```
-We sould check see the topology reloading the file from blob storage (note: We removed the `win` word):
+We sould check see the topology reloading the file from blob storage (note: We removed the `win` word)
 
 ```bash
 WordCount - [count] Loading BLOB contents (wordstotrack v1498754196000):
