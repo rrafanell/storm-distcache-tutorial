@@ -33,12 +33,12 @@ The *start.sh* script fires up a Docker compose which builds the necessary infra
 ```bash
 docker ps
 
-CONTAINER ID        IMAGE                COMMAND                  CREATED             STATUS              PORTS                          NAMES
-9c3a98f84200        storm:1.0.3          "/docker-entrypoin..."   ...       ...                                       supervisor
-55a2fa805ef5        storm:1.0.3          "/docker-entrypoin..."   ...       ...        0.0.0.0:8080->8080/tcp         ui
-284a26fd5d14        storm:1.0.3          "/docker-entrypoin..."   ...      ...        0.0.0.0:6627->6627/tcp         nimbus
-9dcfa5ad74cc        wurstmeister/kafka   "start-kafka.sh"         ...      ...       0.0.0.0:9092->9092/tcp         kafka
-e6b2f10dd6cf        zookeeper            "/docker-entrypoin..."   ...      ...        2181/tcp, 2888/tcp, 3888/tcp   zookeeper
+CONTAINER ID        IMAGE                COMMAND                  CREATED   STATUS              PORTS                      NAMES
+9c3a98f84200        storm:1.0.3          "/docker-entrypoin..."   ...        ...                                         supervisor
+55a2fa805ef5        storm:1.0.3          "/docker-entrypoin..."   ...        ...          0.0.0.0:8080->8080/tcp         ui
+284a26fd5d14        storm:1.0.3          "/docker-entrypoin..."   ...        ...          0.0.0.0:6627->6627/tcp         nimbus
+9dcfa5ad74cc        wurstmeister/kafka   "start-kafka.sh"         ...        ...          0.0.0.0:9092->9092/tcp         kafka
+e6b2f10dd6cf        zookeeper            "/docker-entrypoin..."   ...        ...          2181/tcp, 2888/tcp, 3888/tcp   zookeeper
 ```
 
 ## Preparing the example
