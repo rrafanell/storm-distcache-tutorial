@@ -41,7 +41,7 @@ CONTAINER ID        IMAGE                COMMAND                  CREATED   STAT
 e6b2f10dd6cf        zookeeper            "/docker-entrypoin..."   ...        ...          2181/tcp, 2888/tcp, 3888/tcp   zookeeper
 ```
 
-## Preparing the example
+## Running the example
 
 ### The Twitter Kafka producer
 
